@@ -17,11 +17,15 @@ public final class FreeDBuffer  {
         return byteBuffer.getShort();
     }
 
-    public int readTrilobyte() { // This is what I'm calling int24. Feel free to be mad at me.
+    public int readTrilobyteUnsigned() {
         byte h = byteBuffer.get();
         byte m = byteBuffer.get();
         byte l = byteBuffer.get();
         return (h << 16) | (m << 8) | (l);
+    }
+
+    public int readTrilobyte() { // This is what I'm calling int24. Feel free to be mad at me.
+        return readTrilobyteUnsigned() | 0xFF000000; // converts it to signed
     }
 
     public int readInt() {

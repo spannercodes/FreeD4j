@@ -22,17 +22,16 @@ Message message = FreeD4j.readMessage(payload); // Parse the data
 switch (message) { // If you're using Java 21, you can use the new pattern switching!
   case PositionMessage positionMessage -> {
     int camera = positionMessage.camera();
-    int x = positionMessage.x();
-    int y = positionMessage.y();
-    int z = positionMessage.z();
+    int x = positionMessage.metricPosition().x();
+    int y = positionMessage.metricPosition().y();
+    int z = positionMessage.metricPosition().z();
   }
 }
 
 // ...
 ```
 ### Quirks
-- At the moment, units are given as the raw (usually signed) integers that they were parsed as. It is planned for an easy way to convert them to metric, but until then, you should read the
-  document linked earlier for more info. There will be no support for imperial units.
+- By default, `PositionMessage` keeps the raw values sent. Use `.metricPosition()` to convert the values into metric.
 
 
 ## Related Projects

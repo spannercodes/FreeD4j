@@ -1,6 +1,7 @@
 package dev.spnr.freed4j.message;
 
 import dev.spnr.freed4j.util.FreeDBuffer;
+import dev.spnr.freed4j.util.Metric;
 
 public record PositionMessage(
         int camera, // 1 byte
@@ -24,11 +25,15 @@ public record PositionMessage(
                 buffer.readTrilobyte(), // x
                 buffer.readTrilobyte(), // y
                 buffer.readTrilobyte(), // z
-                buffer.readTrilobyte(), // zoom
-                buffer.readTrilobyte(), // focus
+                buffer.readTrilobyteUnsigned(), // zoom
+                buffer.readTrilobyteUnsigned(), // focus
                 buffer.readShort() // user
         );
         buffer.readByte(); // TODO: Handle checksum
+    }
+
+    public Metric.MetricPosition metricPosition() {
+        return new Metric.MetricPosition(this);
     }
 
 }
