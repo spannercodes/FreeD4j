@@ -26,7 +26,7 @@ public final class FreeD4j {
 
     public static Message readMessage(FreeDBuffer buffer) {
         byte type = buffer.readByte();
-        Function<FreeDBuffer,Message> reader = MESSAGE_READERS.get(type);
+        Function<FreeDBuffer,Message> reader = MESSAGE_READERS.get(type & 0xFF);
         return reader.apply(buffer);
     }
 

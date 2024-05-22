@@ -14,7 +14,21 @@ public record EEPROMMessage(
                 buffer.readShort(), // address
                 buffer.readBytes(16) // data
         );
-        buffer.readByte(); // TODO: Handle checksum
+        assert buffer.getExpectedChecksum() == buffer.readByte() : "Checksum match failed";
+    }
+
+    public void write(FreeDBuffer buffer) {
+        buffer.writeByte(type());
+        buffer.writeByte((byte) camera());
+        buffer.writeShort(address);
+        for (int i=0;i<16;i++) {
+            buffer.writeByte(data[i]); // TODO: Add writeBytes(...)
+        }
+        buffer.writeChecksum();
+    }
+
+    public byte type() {
+        return (byte) 0xD8;
     }
 
 }

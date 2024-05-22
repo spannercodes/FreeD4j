@@ -12,7 +12,18 @@ public record CommandMessage(
                 buffer.readByte(), // camera
                 buffer.readByte() // command
         );
-        buffer.readByte(); // TODO: Handle checksum
+        assert buffer.getExpectedChecksum() == buffer.readByte() : "Checksum match failed";
+    }
+
+    public void write(FreeDBuffer buffer) {
+        buffer.writeByte(type());
+        buffer.writeByte((byte) camera());
+        buffer.writeByte(command);
+        buffer.writeChecksum();
+    }
+
+    public byte type() {
+        return (byte) 0xD0;
     }
 
     public CommandMessage stopStreamMode(int camera) {

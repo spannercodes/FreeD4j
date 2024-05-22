@@ -28,7 +28,26 @@ public record CalibrationMessage(
                 buffer.readTrilobyte(), // yOffset
                 buffer.readTrilobyte() // zOffset
         );
-        buffer.readByte(); // TODO: Handle checksum
+        assert buffer.getExpectedChecksum() == buffer.readByte() : "Checksum match failed";
+    }
+
+    public void write(FreeDBuffer buffer) {
+        buffer.writeByte(type());
+        buffer.writeByte((byte) camera());
+        buffer.writeTrilobyte(lensX);
+        buffer.writeTrilobyte(lensY);
+        buffer.writeTrilobyte(lensXScale);
+        buffer.writeTrilobyte(lensYScale);
+        buffer.writeTrilobyte(lensDistortionA);
+        buffer.writeTrilobyte(lensDistortionB);
+        buffer.writeTrilobyte(xOffset);
+        buffer.writeTrilobyte(yOffset);
+        buffer.writeTrilobyte(zOffset);
+        buffer.writeChecksum();
+    }
+
+    public byte type() {
+        return (byte) 0xDA;
     }
 
 }

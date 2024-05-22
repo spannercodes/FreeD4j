@@ -32,7 +32,28 @@ public record SystemStatusMessage(
                 buffer.readByte(), // num. targets used
                 buffer.readTrilobyte() // rms error
         );
-        buffer.readByte(); // TODO: Handle checksum
+        assert buffer.getExpectedChecksum() == buffer.readByte() : "Checksum match failed";
+    }
+
+    public void write(FreeDBuffer buffer) {
+        buffer.writeByte(type());
+        buffer.writeByte((byte) camera());
+        buffer.writeByte(switches);
+        buffer.writeByte(leds);
+        buffer.writeByte(status);
+        buffer.writeByte(cpuVersion);
+        buffer.writeByte(pldVersion);
+        buffer.writeByte(dspVersion);
+        buffer.writeByte(dspStatus);
+        buffer.writeByte(numTargetsSeen);
+        buffer.writeByte(numTargetsIdentified);
+        buffer.writeByte(numTargetsUsed);
+        buffer.writeTrilobyte(rmsError);
+        buffer.writeChecksum();
+    }
+
+    public byte type() {
+        return (byte) 0xD2;
     }
 
 }

@@ -4,6 +4,7 @@ import dev.spnr.freed4j.util.FreeDBuffer;
 
 // NOTE: D4 is first target, D5 is "next target"
 public record TargetMessage(
+        byte type,
         int camera, // 1 byte
         int studio, // 1 byte
         short target, // target number
@@ -15,6 +16,7 @@ public record TargetMessage(
 
     public TargetMessage(FreeDBuffer buffer) {
         this(
+                buffer.back(1).resetChecksum().readByte(), // type
                 buffer.readByte(), // camera
                 buffer.readByte(), // studio
                 buffer.readShort(), // target
@@ -23,6 +25,19 @@ public record TargetMessage(
                 buffer.readTrilobyte(), // z
                 buffer.readTrilobyte() // flags
         );
+        assert buffer.getExpectedChecksum() == buffer.readByte() : "Checksum match failed";
+    }
+
+    public void write(FreeDBuffer buffer) {
+        buffer.writeByte(type());
+        buffer.writeByte((byte) camera());
+        buffer.writeByte((byte) studio);
+        buffer.writeShort(target);
+        buffer.writeTrilobyte(x);
+        buffer.writeTrilobyte(y);
+        buffer.writeTrilobyte(z);
+        buffer.writeTrilobyte(flags);
+        buffer.writeChecksum();
     }
 
 }

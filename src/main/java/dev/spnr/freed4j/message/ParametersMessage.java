@@ -28,11 +28,31 @@ public record ParametersMessage(
                 buffer.readByte(), // blackVideoThreshold
                 buffer.readByte(), // whiteVideoThreshold
                 buffer.readByte(), // blackVideoClipLevel
-                buffer.readByte(), // whiteVideoCiipLevel
+                buffer.readByte(), // whiteVideoClipLevel
                 buffer.readByte(), // maxBlackPixels
                 buffer.readByte() // maxWhitePixels
         );
-        buffer.readByte(); // TODO: Handle checksum
+        assert buffer.getExpectedChecksum() == buffer.readByte() : "Checksum match failed";
+    }
+
+    public void write(FreeDBuffer buffer) {
+        buffer.writeByte(type());
+        buffer.writeByte((byte) camera());
+        buffer.writeByte((byte) studio);
+        buffer.writeByte(smoothing);
+        buffer.writeByte(maxAsymmetry);
+        buffer.writeByte(halfBoxWidth);
+        buffer.writeByte(blackVideoThreshold);
+        buffer.writeByte(whiteVideoThreshold);
+        buffer.writeByte(blackVideoClipLevel);
+        buffer.writeByte(whiteVideoClipLevel);
+        buffer.writeByte(maxBlackPixels);
+        buffer.writeByte(maxWhitePixels);
+        buffer.writeChecksum();
+    }
+
+    public byte type() {
+        return (byte) 0xD3;
     }
 
 }

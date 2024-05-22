@@ -29,7 +29,26 @@ public record PositionMessage(
                 buffer.readTrilobyteUnsigned(), // focus
                 buffer.readShort() // user
         );
-        buffer.readByte(); // TODO: Handle checksum
+        assert buffer.getExpectedChecksum() == buffer.readByte() : "Checksum match failed";
+    }
+
+    public void write(FreeDBuffer buffer) {
+        buffer.writeByte(type());
+        buffer.writeByte((byte) camera());
+        buffer.writeTrilobyte(pan);
+        buffer.writeTrilobyte(tilt);
+        buffer.writeTrilobyte(roll);
+        buffer.writeTrilobyte(x);
+        buffer.writeTrilobyte(y);
+        buffer.writeTrilobyte(z);
+        buffer.writeTrilobyteUnsigned(zoom);
+        buffer.writeTrilobyteUnsigned(focus);
+        buffer.writeShort(user);
+        buffer.writeChecksum();
+    }
+
+    public byte type() {
+        return (byte) 0xD1;
     }
 
     public Metric.MetricPosition metricPosition() {
